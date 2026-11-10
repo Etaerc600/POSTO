@@ -287,6 +287,28 @@ footer p {
     }
 
     .lightbox {
+
+        
+.like-button {
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid #51463D;
+    color: #E8E7E0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.like-button:hover,
+.like-button.liked {
+    background: #51463D;
+    color: white;
+}
+
+.like-button.liked {
+    border-color: #51463D;
+}
         padding: 15px;
     }
 }
