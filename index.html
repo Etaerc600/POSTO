@@ -43,6 +43,7 @@
             <div class="card-info">
                 <h3>Morning Coffee</h3>
                 <p>WINTER CAFÉ</p>
+                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
             </div>
         </article>
 
@@ -54,6 +55,7 @@
             <div class="card-info">
                 <h3>Slow Afternoon</h3>
                 <p>COFFEE & MOMENTS</p>
+                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
             </div>
         </article>
 
@@ -65,6 +67,7 @@
             <div class="card-info">
                 <h3>Cold Mountains</h3>
                 <p>WINTER LANDSCAPE</p>
+                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
             </div>
         </article>
 
@@ -76,6 +79,7 @@
             <div class="card-info">
                 <h3>Winter Silence</h3>
                 <p>NATURE & MEMORIES</p>
+                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
             </div>
         </article>
 
@@ -94,6 +98,44 @@
 </footer>
 
 <script>
+function toggleLike(button) {
+    const card = button.closest(".card");
+    const title = card.querySelector("h3").textContent;
+    const key = "mono-like-" + title;
+
+    let data = JSON.parse(
+        localStorage.getItem(key) || '{"count":0,"liked":false}'
+    );
+
+    if (!data.liked) {
+        data.count++;
+        data.liked = true;
+    } else {
+        data.count = Math.max(0, data.count - 1);
+        data.liked = false;
+    }
+
+    localStorage.setItem(key, JSON.stringify(data));
+
+    button.querySelector("span").textContent = data.count;
+    button.setAttribute("aria-pressed", data.liked);
+    button.classList.toggle("liked", data.liked);
+}
+
+document.querySelectorAll(".card").forEach(card => {
+    const title = card.querySelector("h3").textContent;
+    const data = JSON.parse(
+        localStorage.getItem("mono-like-" + title) ||
+        '{"count":0,"liked":false}'
+    );
+
+    const button = card.querySelector(".like-button");
+
+    button.querySelector("span").textContent = data.count;
+    button.setAttribute("aria-pressed", data.liked);
+    button.classList.toggle("liked", data.liked);
+});
+
 function openImage(image) {
     const lightbox = document.getElementById("lightbox");
     const largeImage = document.getElementById("lightbox-image");
@@ -107,6 +149,11 @@ function closeImage() {
     document.getElementById("lightbox").classList.remove("active");
     document.body.style.overflow = "auto";
 }
+
+document.querySelector(".close-button").addEventListener("click", function(event) {
+    event.stopPropagation();
+    closeImage();
+});
 
 document.addEventListener("keydown", function(event) {
     if (event.key === "Escape") {
