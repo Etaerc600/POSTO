@@ -1,59 +1,187 @@
+/* MONO — WINTER 1996 */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    background: #0d0d0d;
-    color: white;
-    font-family: Arial, sans-serif;
+html {
+    scroll-behavior: smooth;
 }
+
+body {
+    background: #222426;
+    color: #E8E7E0;
+    font-family: Georgia, serif;
+}
+
+/* HEADER */
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 8%;
-    border-bottom: 1px solid #252525;
+    padding: 28px 7%;
+    background: #222426;
+    border-bottom: 1px solid #51463D;
 }
 
 header h1 {
-    letter-spacing: 6px;
-    font-size: 28px;
+    font-size: 32px;
+    letter-spacing: 8px;
+    color: #E8E7E0;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
 }
 
 nav a {
-    color: #aaa;
+    color: #C8C1B6;
     text-decoration: none;
-    margin-left: 25px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.3s;
 }
 
 nav a:hover {
     color: white;
 }
 
-main {
+/* HERO */
+
+.hero {
+    min-height: 480px;
+    padding: 130px 8%;
+    background:
+        linear-gradient(rgba(34,36,38,.55), rgba(34,36,38,.85)),
+        url("https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1800")
+        center/cover;
+}
+
+.hero p:first-child {
+    color: #C1A98F;
+    letter-spacing: 5px;
+    font-size: 12px;
+    margin-bottom: 25px;
+}
+
+.hero h2 {
+    font-size: clamp(38px, 6vw, 75px);
+    line-height: 1.1;
+    font-weight: normal;
+    margin-bottom: 25px;
+}
+
+.hero p:last-child {
+    color: #D0CBC3;
+    font-size: 16px;
+}
+
+/* GALLERY */
+
+.gallery-section {
+    padding: 90px 7%;
+}
+
+.gallery-section h2 {
+    font-size: 42px;
+    font-weight: normal;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #A9A29A;
+    margin-bottom: 45px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+}
+
+.card {
+    background: #51463D;
+    padding-bottom: 20px;
+    overflow: hidden;
+    transition: transform 0.4s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+.card img {
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.75) contrast(1.05);
+    transition: filter 0.4s;
+}
+
+.card:hover img {
+    filter: saturate(1) contrast(1.1);
+}
+
+.card h3 {
+    font-size: 25px;
+    font-weight: normal;
+    padding: 20px 20px 5px;
+}
+
+.card p {
+    color: #D0C3B5;
+    padding: 0 20px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* FOOTER */
+
+footer {
     text-align: center;
-    padding: 160px 20px;
+    padding: 65px 20px;
+    background: #17191A;
+    border-top: 1px solid #51463D;
 }
 
-main h2 {
-    font-size: 55px;
-    margin-bottom: 20px;
+footer h2 {
+    letter-spacing: 8px;
+    margin-bottom: 15px;
 }
 
-main p {
-    color: #999;
-    font-size: 18px;
-    margin-bottom: 35px;
+footer p {
+    color: #A9A29A;
+    margin: 10px;
 }
 
-button {
-    background: white;
-    color: black;
-    border: none;
-    padding: 15px 30px;
-    cursor: pointer;
-    font-size: 15px;
+/* MOBILE */
+
+@media (max-width: 700px) {
+    header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    nav {
+        gap: 15px;
+    }
+
+    .hero {
+        padding: 100px 7%;
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .card img {
+        height: 260px;
+    }
 }
