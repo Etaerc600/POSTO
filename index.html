@@ -161,6 +161,58 @@ document.addEventListener("keydown", function(event) {
     }
 });
 </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseClient = window.supabase.createClient(
+  "https://ldwaefjivygrqmlqjcyt.supabase.co",
+  "sb_publishable_SIhkDm0TmrOcQzusL0TecQ_p6iQbGx6"
+);
+
+const buttons = document.querySelectorAll(".like-button");
+
+async function loadLikes() {
+  const { data, error } = await supabaseClient
+    .from("photo_likes")
+    .select("photo_id, likes");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  buttons.forEach((button, index) => {
+    const photoId = `photo${index + 1}`;
+    const photo = data.find(item => item.photo_id === photoId);
+    button.textContent = `❤️ ${photo ? photo.likes : 0}`;
+  });
+}
+
+buttons.forEach((button, index) => {
+  const photoId = `photo${index + 1}`;
+
+  button.removeAttribute("onclick");
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+
+    const { data, error } = await supabaseClient.rpc(
+      "increment_like",
+      { photo: photoId }
+    );
+
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      button.textContent = `❤️ ${data}`;
+    }
+
+    button.disabled = false;
+  });
+});
+
+loadLikes();
+</script>
 
 </body>
 </html>
