@@ -13,6 +13,7 @@
     <nav>
         <a href="#home">Home</a>
         <a href="#gallery">Gallery</a>
+        <a href="#submit">Submit a photo</a>
         <a href="#about">About</a>
     </nav>
 </header>
@@ -37,56 +38,94 @@
 
         <article class="card">
             <div class="image-wrap">
-                <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=1200" alt="Café chaleureux" onclick="openImage(this)">
+                <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=1200" alt="Café chaleureux">
                 <span class="image-number">01</span>
             </div>
             <div class="card-info">
                 <h3>Morning Coffee</h3>
                 <p>WINTER CAFÉ</p>
-                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
+                <button class="like-button" data-photo="photo1">
+                    ❤️ <span>0</span>
+                </button>
             </div>
         </article>
 
         <article class="card">
             <div class="image-wrap">
-                <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200" alt="Intérieur de café" onclick="openImage(this)">
+                <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200" alt="Intérieur de café">
                 <span class="image-number">02</span>
             </div>
             <div class="card-info">
                 <h3>Slow Afternoon</h3>
                 <p>COFFEE & MOMENTS</p>
-                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
+                <button class="like-button" data-photo="photo2">
+                    ❤️ <span>0</span>
+                </button>
             </div>
         </article>
 
         <article class="card">
             <div class="image-wrap">
-                <img src="https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1200" alt="Montagnes enneigées" onclick="openImage(this)">
+                <img src="https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1200" alt="Montagnes enneigées">
                 <span class="image-number">03</span>
             </div>
             <div class="card-info">
                 <h3>Cold Mountains</h3>
                 <p>WINTER LANDSCAPE</p>
-                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
+                <button class="like-button" data-photo="photo3">
+                    ❤️ <span>0</span>
+                </button>
             </div>
         </article>
 
         <article class="card">
             <div class="image-wrap">
-                <img src="https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1200" alt="Paysage d'hiver" onclick="openImage(this)">
+                <img src="https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=1200" alt="Paysage d'hiver">
                 <span class="image-number">04</span>
             </div>
             <div class="card-info">
                 <h3>Winter Silence</h3>
                 <p>NATURE & MEMORIES</p>
-                <button class="like-button" type="button" aria-pressed="false" onclick="toggleLike(this)">♡ <span>0</span> Like</button>
+                <button class="like-button" data-photo="photo4">
+                    ❤️ <span>0</span>
+                </button>
             </div>
         </article>
 
     </div>
 </section>
 
-<div class="lightbox" id="lightbox" onclick="closeImage()">
+<section id="submit" class="gallery-section">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">SHARE YOUR MOMENT</p>
+            <h2>Submit a Photo</h2>
+        </div>
+    </div>
+
+    <p>
+        Have a beautiful winter moment?
+        You can share it with MONO.
+    </p>
+
+    <form id="photo-form">
+        <label for="photo-file">Choose your photo</label>
+        <input
+            type="file"
+            id="photo-file"
+            accept="image/jpeg,image/png,image/webp"
+            disabled
+        >
+
+        <p>Photos will be checked before publication.</p>
+
+        <button type="button" disabled>
+            Upload coming soon
+        </button>
+    </form>
+</section>
+
+<div class="lightbox" id="lightbox">
     <button class="close-button" aria-label="Fermer">&times;</button>
     <img id="lightbox-image" src="" alt="Image agrandie">
 </div>
@@ -97,180 +136,109 @@
     <p class="copyright">© 2026 MONO — ISSUE 001</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-function toggleLike(button) {
-    const card = button.closest(".card");
-    const title = card.querySelector("h3").textContent;
-    const key = "mono-like-" + title;
+const supabaseClient = window.supabase.createClient(
+    "https://ldwaefjivygrqmlqjcyt.supabase.co",
+    "sb_publishable_SIhkDm0TmrOcQzusL0TecQ_p6iQbGx6"
+);
 
-    let data = JSON.parse(
-        localStorage.getItem(key) || '{"count":0,"liked":false}'
-    );
+// -------------------------
+// LIGHTBOX
+// -------------------------
 
-    if (!data.liked) {
-        data.count++;
-        data.liked = true;
-    } else {
-        data.count = Math.max(0, data.count - 1);
-        data.liked = false;
-    }
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightbox-image");
 
-    localStorage.setItem(key, JSON.stringify(data));
-
-    button.querySelector("span").textContent = data.count;
-    button.setAttribute("aria-pressed", data.liked);
-    button.classList.toggle("liked", data.liked);
-}
-
-document.querySelectorAll(".card").forEach(card => {
-    const title = card.querySelector("h3").textContent;
-    const data = JSON.parse(
-        localStorage.getItem("mono-like-" + title) ||
-        '{"count":0,"liked":false}'
-    );
-
-    const button = card.querySelector(".like-button");
-
-    button.querySelector("span").textContent = data.count;
-    button.setAttribute("aria-pressed", data.liked);
-    button.classList.toggle("liked", data.liked);
+document.querySelectorAll(".image-wrap img").forEach(image => {
+    image.addEventListener("click", () => {
+        lightboxImage.src = image.src;
+        lightbox.classList.add("active");
+        document.body.style.overflow = "hidden";
+    });
 });
 
-function openImage(image) {
-    const lightbox = document.getElementById("lightbox");
-    const largeImage = document.getElementById("lightbox-image");
-
-    largeImage.src = image.src;
-    lightbox.classList.add("active");
-    document.body.style.overflow = "hidden";
-}
-
 function closeImage() {
-    document.getElementById("lightbox").classList.remove("active");
+    lightbox.classList.remove("active");
+    lightboxImage.src = "";
     document.body.style.overflow = "auto";
 }
 
-document.querySelector(".close-button").addEventListener("click", function(event) {
-    event.stopPropagation();
-    closeImage();
+document.querySelector(".close-button").addEventListener("click", closeImage);
+
+lightbox.addEventListener("click", event => {
+    if (event.target === lightbox) {
+        closeImage();
+    }
 });
 
-document.addEventListener("keydown", function(event) {
+document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         closeImage();
     }
 });
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-const supabaseClient = window.supabase.createClient(
-  "https://ldwaefjivygrqmlqjcyt.supabase.co",
-  "sb_publishable_SIhkDm0TmrOcQzusL0TecQ_p6iQbGx6"
-);
+// -------------------------
+// SHARED LIKES
+// -------------------------
 
-const buttons = document.querySelectorAll(".like-button");
+const likeButtons = document.querySelectorAll(".like-button");
 
 async function loadLikes() {
-  const { data, error } = await supabaseClient
-    .from("photo_likes")
-    .select("photo_id, likes");
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  buttons.forEach((button, index) => {
-    const photoId = `photo${index + 1}`;
-    const photo = data.find(item => item.photo_id === photoId);
-    button.textContent = `❤️ ${photo ? photo.likes : 0}`;
-  });
-}
-
-buttons.forEach((button, index) => {
-  const photoId = `photo${index + 1}`;
-
-  button.removeAttribute("onclick");
-
-  button.addEventListener("click", async () => {
-    button.disabled = true;
-
-    const { data, error } = await supabaseClient.rpc(
-      "increment_like",
-      { photo: photoId }
-    );
+    const { data, error } = await supabaseClient
+        .from("photo_likes")
+        .select("photo_id, likes");
 
     if (error) {
-      alert("Erreur : " + error.message);
-    } else {
-      button.textContent = `❤️ ${data}`;
+        console.error("Likes loading error:", error);
+        return;
     }
 
-    button.disabled = false;
-  });
-});
+    likeButtons.forEach(button => {
+        const photoId = button.dataset.photo;
+        const photo = data.find(item => item.photo_id === photoId);
 
-loadLikes();
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        button.querySelector("span").textContent =
+            photo ? photo.likes : 0;
 
-<script>
-const supabaseClient = window.supabase.createClient(
-  "https://ldwaefjivygrqmlqjcyt.supabase.co",
-  "sb_publishable_SIhkDm0TmrOcQzusL0TecQ_p6iQbGx6"
-);
-
-const buttons = document.querySelectorAll(".like-button");
-
-async function loadLikes() {
-  const { data, error } = await supabaseClient
-    .from("photo_likes")
-    .select("photo_id, likes");
-
-  if (error) {
-    console.error("Erreur de chargement :", error);
-    return;
-  }
-
-  buttons.forEach((button, index) => {
-    const photoId = `photo${index + 1}`;
-    const photo = data.find(item => item.photo_id === photoId);
-    const liked = localStorage.getItem("mono_liked_" + photoId);
-
-    button.textContent = `❤️ ${photo ? photo.likes : 0}`;
-
-    if (liked) {
-      button.textContent += " — Déjà aimé";
-      button.disabled = true;
-    }
-  });
+        if (localStorage.getItem("mono_liked_" + photoId)) {
+            button.disabled = true;
+            button.classList.add("liked");
+            button.title = "Already liked";
+        }
+    });
 }
 
-buttons.forEach((button, index) => {
-  const photoId = `photo${index + 1}`;
+likeButtons.forEach(button => {
+    button.addEventListener("click", async () => {
+        const photoId = button.dataset.photo;
+        const storageKey = "mono_liked_" + photoId;
 
-  button.removeAttribute("onclick");
+        if (localStorage.getItem(storageKey)) {
+            return;
+        }
 
-  button.addEventListener("click", async () => {
-    if (localStorage.getItem("mono_liked_" + photoId)) return;
+        button.disabled = true;
 
-    button.disabled = true;
+        const { data, error } = await supabaseClient.rpc(
+            "increment_like",
+            { photo: photoId }
+        );
 
-    const { data, error } = await supabaseClient.rpc(
-      "increment_like",
-      { photo: photoId }
-    );
+        if (error) {
+            console.error("Like error:", error);
+            alert("Impossible d'ajouter le Like. Réessaie.");
+            button.disabled = false;
+            return;
+        }
 
-    if (error) {
-      alert("Erreur : " + error.message);
-      button.disabled = false;
-      return;
-    }
+        localStorage.setItem(storageKey, "true");
 
-    localStorage.setItem("mono_liked_" + photoId, "true");
-    button.textContent = `❤️ ${data} — Déjà aimé`;
-  });
+        button.querySelector("span").textContent = data;
+        button.classList.add("liked");
+        button.title = "Already liked";
+    });
 });
 
 loadLikes();
